@@ -2,7 +2,7 @@
 # Push app
 
 if ! cf app $CF_APP; then  
-  cf push $CF_APP -n ${CF_APP}-${CF_SPACE}
+  cf push $CF_APP -n ${CF_APP}-${CF_SPACE} --no-start
 else
   OLD_CF_APP=${CF_APP}-OLD-$(date +"%s")
   rollback() {
@@ -17,7 +17,7 @@ else
   set -e
   trap rollback ERR
   cf rename $CF_APP $OLD_CF_APP
-  cf push $CF_APP -n ${CF_APP}-${CF_SPACE}
+  cf push $CF_APP -n ${CF_APP}-${CF_SPACE} --no-start
   cf delete $OLD_CF_APP -f
 fi
 # Export app name and URL for use in later Pipeline jobs
@@ -28,4 +28,4 @@ export APP_URL=http://$(cf app $CF_APP_NAME | grep -e urls: -e routes: | awk '{p
 
 cf set-env $CF_APP ENV_TARGET $CF_SPACE 
 cf set-env $CF_APP IMAGE_VERSION $IDS_VERSION
-cf restage $CF_APP
+cf restart $CF_APP
