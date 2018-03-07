@@ -1,0 +1,6 @@
+---
+applications:
+ - name: reporting-manager-ui
+   random-route: false
+   command: npm start
+   memory: 64M
